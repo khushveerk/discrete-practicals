@@ -1,107 +1,103 @@
 # discrete-practicals
 ## que 1 -Create a class SET. Create member functions to perform the following SET operations:-
 
+from itertools import chain, combinations, product
+
 class SET:
-    def __init__(self, u_set):
-        self.u_set = set(u_set)
+    def __init__(self, elements):
+        self.set = set(elements)
 
     def is_member(self, element):
-        return "Element Found" if element in self.u_set else "Element Not Found"
+        return element in self.set
 
     def powerset(self):
-        powerset_list = []
-        length = len(self.u_set)
-        u_set_list = list(self.u_set)
+        return list(chain.from_iterable(combinations(self.set, r) for r in range(len(self.set)+1)))
 
-        for i in range(1 << length):  # from 0 to 2^n - 1
-            subset = set()
-            for j in range(length):
-                if i & (1 << j):  # check if j-th bit is set
-                    subset.add(u_set_list[j])
-            powerset_list.append(subset)
+    def is_subset(self, other_set):
+        return self.set.issubset(other_set.set)
 
-        print("Your Required Powerset Is:")
-        for s in powerset_list:
-            print(s)
+    def union(self, other_set):
+        return self.set.union(other_set.set)
 
-    def subset(self, subset_set):
-        if set(subset_set.u_set).issubset(self.u_set):
-            return "This is a subset"
+    def intersection(self, other_set):
+        return self.set.intersection(other_set.set)
+
+    def complement(self, universal_set):
+        return universal_set.set.difference(self.set)
+
+    def difference(self, other_set):
+        return self.set.difference(other_set.set)
+
+    def symmetric_difference(self, other_set):
+        return self.set.symmetric_difference(other_set.set)
+
+    def cartesian_product(self, other_set):
+        return list(product(self.set, other_set.set))
+
+
+def menu():
+    print("\n==== SET OPERATIONS MENU ====")
+    print("1. Check Membership")
+    print("2. Powerset")
+    print("3. Subset Check")
+    print("4. Union")
+    print("5. Intersection")
+    print("6. Complement (Provide Universal Set)")
+    print("7. Set Difference")
+    print("8. Symmetric Difference")
+    print("9. Cartesian Product")
+    print("10. Exit")
+
+
+if __name__ == "__main__":
+    A = SET(input("Enter elements of Set A (space separated): ").split())
+    B = SET(input("Enter elements of Set B (space separated): ").split())
+
+    while True:
+        menu()
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            ele = input("Enter element to check in Set A: ")
+            print(f"{ele} is in Set A? {A.is_member(ele)}")
+
+        elif choice == "2":
+            print("Powerset of Set A:")
+            for subset in A.powerset():
+                print(subset)
+
+        elif choice == "3":
+            print("Is A a subset of B?", A.is_subset(B))
+
+        elif choice == "4":
+            print("Union of A and B:", A.union(B))
+
+        elif choice == "5":
+            print("Intersection of A and B:", A.intersection(B))
+
+        elif choice == "6":
+            U = SET(input("Enter elements of Universal Set (space separated): ").split())
+            print("Complement of A w.r.t Universal Set:", A.complement(U))
+
+        elif choice == "7":
+            print("A - B:", A.difference(B))
+
+        elif choice == "8":
+            print("Symmetric Difference of A and B:", A.symmetric_difference(B))
+
+        elif choice == "9":
+            print("Cartesian Product A × B:")
+            for pair in A.cartesian_product(B):
+                print(pair)
+
+        elif choice == "10":
+            print("Exiting...")
+            break
+
         else:
-            return "This is not a subset"
+            print("Invalid choice. Try again.")
 
-    def union_intersection(self, set2):
-        print("Union of sets:\n", self.u_set.union(set2.u_set))
-        print("Intersection of sets:\n", self.u_set.intersection(set2.u_set))
-
-    def complement(self, complement_set):
-        print("Complement of set:\n", self.u_set - complement_set.u_set)
-
-    def difference_and_symmetric_difference(self, set2):
-        print("Difference of sets:\n", self.u_set.difference(set2.u_set))
-        print("Symmetric Difference of sets:\n", self.u_set.symmetric_difference(set2.u_set))
-
-    def cartesian_product(self, set2):
-        cartesian_product = {(x, y) for x in self.u_set for y in set2.u_set}
-        print("Cartesian Product of sets:\n", cartesian_product)
-
-
-# Function outside the class to take input
-def create_set(name="Set"):
-    u_set = set(map(int, input(f"Enter elements of {name} separated by space: ").split()))
-    print(f"Your {name} is: {u_set}")
-    return u_set
-
-
-# Menu-Driven Code (outside the class)
-for _ in range(8):  # Run 8 times
-    choice = input("""\nMain Menu:
-1. Check whether an element belongs to the set or not
-2. List all elements of the power set
-3. Check if one set is a subset of another
-4. Find union and intersection of two sets
-5. Find complement of a set
-6. Find difference and symmetric difference between two sets
-7. Find Cartesian product of two sets
-Enter your choice (1-7): """)
-
-    if choice == '1':
-        set1 = SET(create_set())
-        element = int(input("Enter your element: "))
-        print(set1.is_member(element))
-
-    elif choice == '2':
-        set1 = SET(create_set())
-        set1.powerset()
-
-    elif choice == '3':
-        universal_set = SET(create_set("Universal Set"))
-        subset_set = SET(create_set("Another Set"))
-        print(universal_set.subset(subset_set))
-
-    elif choice == '4':
-        set1 = SET(create_set("First Set"))
-        set2 = SET(create_set("Second Set"))
-        set1.union_intersection(set2)
-
-    elif choice == '5':
-        universal_set = SET(create_set("Universal Set"))
-        subset = SET(create_set("Subset"))
-        universal_set.complement(subset)
-
-    elif choice == '6':
-        set1 = SET(create_set("First Set"))
-        set2 = SET(create_set("Second Set"))
-        set1.difference_and_symmetric_difference(set2)
-
-    elif choice == '7':
-        set1 = SET(create_set("First Set"))
-        set2 = SET(create_set("Second Set"))
-        set1.cartesian_product(set2)
-
-    else:
-        print("Invalid choice. Try again.")
-
+#enter a=1 2 3 4 ,b= 2 3 4 and enter any choice like 5,7 or 3 any 
 #-------------------------------------------------------------------------------------------------
 # que 2 - Create a class RELATION, use Matrix notation to represent a relation. Include member functions to check if the relation is Reflexive, Symmetric, Anti-symmetric, Transitive.
 # Using these functions check whether the given relation is: Equivalence or Partial Order relation or None
